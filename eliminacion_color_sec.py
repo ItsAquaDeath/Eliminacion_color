@@ -14,3 +14,18 @@ Autores: xxxx
 
 Fecha DD/MM/YYYY
 """
+def eliminar_color(rojo, verde, azul):
+    # Verificar que las listas tienen la misma longitud
+    if len(rojo) != len(verde) or len(verde) != len(azul):
+        # Esto, en función del resto de código, se puede redirigir a otra cosa
+        raise ValueError("Las listas no tienen la misma longitud") 
+             
+    # Lista de resultados de grises
+    grises = []
+
+    # Iterar sobre las listas y obtener el valor de gris para caada pixel
+    for i in range(len(rojo)):
+        pixel = (rojo[i] + verde[i] + azul[i]) // 3
+        grises.append(pixel)
+
+    return grises
