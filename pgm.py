@@ -37,9 +37,9 @@ def main():
     nombre_archivo = nombre_archivo.split('.')[:-2]
     nombre_archivo = '.'.join(nombre_archivo)
 
-    lista_prueba = [1] * 2133
     alto = 2133
     ancho = 2133
+    lista_prueba = [1] * alto * ancho
     imagen = pgm(ancho, alto, lista_prueba)
 
     out = open(nombre_archivo + '.lenagris.pgm', 'w')
