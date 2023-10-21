@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 """
 eliminacion_color_sec.py
 
@@ -15,3 +15,4 @@ Autores: xxxx
 
 Fecha DD/MM/YYYY
 """
+
