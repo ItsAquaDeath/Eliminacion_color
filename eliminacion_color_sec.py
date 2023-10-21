@@ -14,6 +14,7 @@ Autores: xxxx
 
 Fecha DD/MM/YYYY
 """
+
 class Imagen_ppm:
     ''' 
     Lee y carga una imagen en formato ppm tipo Ascii comprobando formato.
@@ -78,5 +79,7 @@ def main():
     print(f"Dimensiones: {imagen.dimensiones}")
     print(imagen.pixeles_RGB) 
 
+    
 if __name__ == "__main__":
     main()
+
