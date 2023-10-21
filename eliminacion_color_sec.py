@@ -16,7 +16,7 @@ Fecha DD/MM/YYYY
 """
 
 
-class Imagen_ppm:
+class ImagenPpm:
     ''' 
     Lee y carga una imagen en formato ppm tipo Ascii comprobando formato.
 
@@ -24,10 +24,10 @@ class Imagen_ppm:
         Archivo_ppm (str): Ruta del archivo de imagen en formato .ppm
     '''
 
-    def __init__(self, Archivo_ppm: str):
-        self.Archivo_ppm = Archivo_ppm
+    def __init__(self, Archivo: str):
+        self.Archivo = Archivo
         self.formato = None
-        self.dimensiones = None
+        self.dim = None
         self.pixeles_RGB = [[],[],[]]
 
     def Leer_archivo(self):
@@ -35,11 +35,11 @@ class Imagen_ppm:
         Funcion que permite comprobar el numero magico P3 del archivo,
         muestra las dimensiones de la imagen
         '''
-        with open(self.Archivo_ppm, 'r') as archivo:
+        with open(self.Archivo, 'r', encoding="utf-8") as archivo:
             lineas = archivo.readlines()
             if lineas[0].strip() != 'P3':
                 raise ValueError("Formato de archivo PPM incorrecto")
-            self.dimensiones = tuple(map(int, lineas[1].split()))
+            self.dim = tuple(map(int, lineas[1].split()))
             datos = [list(map(int, linea.split())) for linea in lineas[3:]]
             R = []
             G = []
@@ -52,7 +52,7 @@ class Imagen_ppm:
             self.pixeles_RGB = [R, G, B] 
 
 
-def eliminar_color(rojo, verde, azul):
+def eliminar_color(rojo: list, verde: list, azul: list) -> list:
     # Verificar que las listas tienen la misma longitud
     if len(rojo) != len(verde) or len(verde) != len(azul):
         # Esto, en función del resto de código, se puede redirigir a otra cosa
@@ -69,64 +69,59 @@ def eliminar_color(rojo, verde, azul):
     return grises
 
 
-def pgm(ancho: int, alto: int, grises: list) -> str:
+def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     """
-    Genera una imagen PGM en formato P2 con las dimensiones especificadas y una
+    Graba una imagen en formato PGM con las dimensiones especificadas y una
     lista de valores de grises.
 
     Args:
-        ancho (int) Ancho de la imagen en píxeles.
-        alto (int) Alto de la imagen en píxeles.
-        grises (list) Lista de valores de grises para los píxeles de la imagen.
-
-    Returns:
-        (str) Una cadena que contiene el contenido de la imagen PGM en formato
-              P2.
+        ancho (int): Ancho de la imagen en píxeles.
+        alto (int): Alto de la imagen en píxeles.
+        grises (list): Lista de valores de grises para los píxeles de la 
+                       imagen.
+        filename (str): Nombre del fichero pgm
     """
 
-    n = len(grises)
-    magico = 'P2'
-    max_color = '255'
-    dim = str(ancho) + ' ' + str(alto)
+    # Se abre el fichero y se escribe la cabecera
+    f_out = open(filename, "a", encoding="utf-8")
+    f_out.write("P2\n")
+    f_out.write("255\n")
+    f_out.write(str(ancho) + " " + str(alto) + "\n")
 
-    contenido = [magico, dim, max_color]
-    contenido = '\n'.join(contenido)
-    contenido += '\n'
-
-    for i in range(n):
+    # Se escribe el contenido de la imagen en escala de grises
+    linea = ""
+    for i in range(len(grises)):
         if (i + 1) % ancho == 0:
-            contenido += str(grises[i]) + '\n'
+            f_out.write(linea)
+            linea = "\n"
         else:
-            contenido += str(grises[i]) + ' '
+            linea += str(grises[i]) + " "
 
-    return contenido
-
+    # Se cierra el gestor de fichero
+    f_out.close()
+   
 
 def main():
-    imagen = Imagen_ppm('CuestionarioGrupo02.EliminacionColor.lenaoriginal.ppm')
+    """
+    Programa principal.
+    """
+    # Creación del objeto Imagen_ppm
+    ARCHIVO = 'CuestionarioGrupo02.EliminacionColor.lenaoriginal.ppm'
+    imagen = ImagenPpm(ARCHIVO)
     try:
         imagen.Leer_archivo()
     except ValueError:
-        exit 1
+        exit(1)
 
-    print(f"Formato: {imagen.formato}")
-    print(f"Dimensiones: {imagen.dimensiones}")
-    print(imagen.pixeles_RGB) 
+    # Eliminación del color
+    gris = eliminar_color(imagen.pixeles_RGB[0], imagen.pixeles_RGB[1],
+                          imagen.pixeles_RGB[2])
 
-    nombre_archivo = "CuestionarioGrupo02.EliminacionColor.lenaoriginal.ppm"
-    nombre_archivo = nombre_archivo.split('.')[:-2]
-    nombre_archivo = '.'.join(nombre_archivo)
+    # Escribir el archivo en formato pgm
+    nuevo_nombre = ARCHIVO[:-3] + "pgm"
 
-    alto = 2133
-    ancho = 2133
-    lista_prueba = [1] * alto * ancho
-    imagen = pgm(ancho, alto, lista_prueba)
+    grabar_imagen(imagen.dim[0], imagen.dim[1], gris, nuevo_nombre)
 
-    out = open(nombre_archivo + '.lenagris.pgm', 'w')
-    out.write(imagen)
-    out.close()
 
-    
 if __name__ == "__main__":
     main()
-
