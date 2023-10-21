@@ -49,6 +49,24 @@ class Imagen_ppm:
                     B.append(fila[i+2])
             self.pixeles_RGB = [R, G, B] 
 
+
+def eliminar_color(rojo, verde, azul):
+    # Verificar que las listas tienen la misma longitud
+    if len(rojo) != len(verde) or len(verde) != len(azul):
+        # Esto, en función del resto de código, se puede redirigir a otra cosa
+        raise ValueError("Las listas no tienen la misma longitud") 
+             
+    # Lista de resultados de grises
+    grises = []
+
+    # Iterar sobre las listas y obtener el valor de gris para cada pixel
+    for i in range(len(rojo)):
+        pixel = (rojo[i] + verde[i] + azul[i]) // 3
+        grises.append(pixel)
+
+    return grises
+
+
 def main():
     imagen = Imagen_ppm('CuestionarioGrupo02.EliminacionColor.lenaoriginal.ppm')
     try:
