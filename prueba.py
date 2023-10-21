@@ -1,5 +1,17 @@
-# Esto es solo una prueba
+#!/usr/bin/env python
+"""
+eliminacion_color_sec.py
 
-Rama
+Una descripción muy buena de lo que hace el programa :D
 
-rama dos
+Trabajos de Programación avanzada: Trabajo grupal 1
+
+Versión: 1.0
+Autores: xxxx
+         xxxxxxxxxxxxxxxx
+         xxxxxxxxxxxxxxx
+         xxxxx
+         xxxxxxx
+
+Fecha DD/MM/YYYY
+"""
