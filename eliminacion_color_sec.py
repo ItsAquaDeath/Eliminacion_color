@@ -85,18 +85,19 @@ def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     # Se abre el fichero y se escribe la cabecera
     f_out = open(filename, "a", encoding="utf-8")
     f_out.write("P2\n")
-    f_out.write("255\n")
     f_out.write(str(ancho) + " " + str(alto) + "\n")
+    f_out.write("255")
 
     # Se escribe el contenido de la imagen en escala de grises
     linea = ""
     for i in range(len(grises)):
-        if (i + 1) % ancho == 0:
+        if i % ancho == 0:
             f_out.write(linea)
-            linea = "\n"
+            linea = "\n" + str(grises[i]) + " "
         else:
             linea += str(grises[i]) + " "
 
+    f_out.write("\n")
     # Se cierra el gestor de fichero
     f_out.close()
    
