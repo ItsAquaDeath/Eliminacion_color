@@ -97,6 +97,7 @@ def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
         else:
             linea += str(grises[i]) + " "
 
+    f_out.write("\n")
     # Se cierra el gestor de fichero
     f_out.close()
    
