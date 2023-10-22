@@ -85,8 +85,8 @@ def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     # Se abre el fichero y se escribe la cabecera
     f_out = open(filename, "a", encoding="utf-8")
     f_out.write("P2\n")
-    f_out.write(str(ancho) + " " + str(alto))
-    f_out.write("255\n")
+    f_out.write(str(ancho) + " " + str(alto) + "\n")
+    f_out.write("255")
 
     # Se escribe el contenido de la imagen en escala de grises
     linea = ""
