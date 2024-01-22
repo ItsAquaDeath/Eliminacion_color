@@ -1,44 +1,49 @@
 """
 eliminacion_color_sec.py
 
-Una descripción muy buena de lo que hace el programa :D
+Este programa secuencial transforma una imagen a color en una imagen en blanco
+y negro.
+Para ello, recibe un fichero en formato "ppm" tipo "ascii" y devuelve un
+fichero en formato "pgm".
 
-Trabajos de Programación avanzada: Trabajo grupal 1
+Trabajos de Programación avanzada.
+Cuestionarios en grupo 1: Eliminación del color.
 
 Versión: 1.0
-Autores: xxxx
-         xxxxxxxxxxxxxxxx
-         xxxxxxxxxxxxxxx
-         xxxxx
-         xxxxxxx
+Autores: Ana García Gambín
+         Alvaro Martínez MArtínez
+         Laura Tur Giménez
+         Nidia Nathalia Vega Romero
+         Qinding Xie
 
-Fecha DD/MM/YYYY
+Fecha 20/01/2024
 """
+from time import time
 
 
 class ImagenPpm:
-    ''' 
-    Lee y carga una imagen en formato ppm tipo Ascii comprobando formato.
-
-    Args:
-        Archivo_ppm (str): Ruta del archivo de imagen en formato .ppm
-    '''
-
     def __init__(self, Archivo: str):
+        """Esta función inicializa una nueva instancia de la clase ImagenPpm.
+
+        Args:
+            Archivo (str): Ruta del archivo de imagen en formato .ppm
+        """
         self.Archivo = Archivo
         self.formato = None
         self.dim = None
-        self.pixeles_RGB = [[],[],[]]
+        self.pixeles_RGB = [[], [], []]
 
     def Leer_archivo(self):
-        ''' 
+        '''
         Funcion que permite comprobar el numero magico P3 del archivo,
-        muestra las dimensiones de la imagen
+        almacena las dimensiones de la imagen y separa los píxeles en
+        tres canales de color: rojo, ver y azul.
         '''
         with open(self.Archivo, 'r', encoding="utf-8") as archivo:
             lineas = archivo.readlines()
             if lineas[0].strip() != 'P3':
                 raise ValueError("Formato de archivo PPM incorrecto")
+
             self.dim = tuple(map(int, lineas[1].split()))
             datos = [list(map(int, linea.split())) for linea in lineas[3:]]
             R = []
@@ -49,16 +54,26 @@ class ImagenPpm:
                     R.append(fila[i])
                     G.append(fila[i+1])
                     B.append(fila[i+2])
-            self.pixeles_RGB = [R, G, B] 
+            self.pixeles_RGB = [R, G, B]
 
 
 def eliminar_color(rojo: list, verde: list, azul: list) -> list:
+    """
+    Esta función recibe tres listas de píxeles y devuelve una lista con los
+    píxeles resultado tras la operación de eliminación del color.
+
+    Args:
+        rojo (list) Lista de valores de píxeles rojos.
+        verde (list) Lista de valores de píxeles verdes.
+        azul (list) Lista de valores de píxeles azules.
+
+    Returns:
+        grises (list) Lista de valores de píxeles sin color.
+    """
     # Verificar que las listas tienen la misma longitud
     if len(rojo) != len(verde) or len(verde) != len(azul):
-        # Esto, en función del resto de código, se puede redirigir a otra cosa
-        raise ValueError("Las listas no tienen la misma longitud") 
-             
-    # Lista de resultados de grises
+        raise ValueError("Las listas no tienen la misma longitud")
+
     grises = []
 
     # Iterar sobre las listas y obtener el valor de gris para cada pixel
@@ -71,15 +86,14 @@ def eliminar_color(rojo: list, verde: list, azul: list) -> list:
 
 def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     """
-    Graba una imagen en formato PGM con las dimensiones especificadas y una
-    lista de valores de grises.
+    Esta función recibe un alista de píxeles y, a partir de ella, graba una
+    imagen en formato "pgm" con las dimensiones especificadas.
 
     Args:
-        ancho (int): Ancho de la imagen en píxeles.
-        alto (int): Alto de la imagen en píxeles.
-        grises (list): Lista de valores de grises para los píxeles de la 
-                       imagen.
-        filename (str): Nombre del fichero pgm
+        ancho (int) Ancho de la imagen en píxeles.
+        alto (int) Alto de la imagen en píxeles.
+        grises (list) Lista de valores de grises para los píxeles de la imagen.
+        filename (str) Nombre del fichero pgm
     """
 
     # Se abre el fichero y se escribe la cabecera
@@ -100,15 +114,24 @@ def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     f_out.write(linea + "\n")
     # Se cierra el gestor de fichero
     f_out.close()
-   
+
 
 def main():
     """
-    Programa principal.
+    Función correspondiente al programa principal. Se pide el nombre de la
+    imagen al usuario para, a continuación, crear la clase ImagenPpm. Se llama
+    a la función que eliminará el color de la imagen y se graba el nuevo
+    fichero obtenido. Se utiliza la función time() del módulo time para obtener
+    el tiempo de ejecución empleado.
     """
+    tiempo_inicial = time()
+
     # Creación del objeto Imagen_ppm
-    ARCHIVO = 'CuestionarioGrupo02.EliminacionColor.lenaoriginal.ppm'
-    imagen = ImagenPpm(ARCHIVO)
+    Archivo = input("Por favor, introduce el nombre del archivo con"
+                    " la extensión '.ppm': ")
+
+    imagen = ImagenPpm(Archivo)
+
     try:
         imagen.Leer_archivo()
     except ValueError:
@@ -119,9 +142,12 @@ def main():
                           imagen.pixeles_RGB[2])
 
     # Escribir el archivo en formato pgm
-    nuevo_nombre = ARCHIVO[:-3] + "pgm"
+    nuevo_nombre = Archivo[:-3] + "pgm"
 
     grabar_imagen(imagen.dim[0], imagen.dim[1], gris, nuevo_nombre)
+
+    tiempo_final = time()
+    print(tiempo_final - tiempo_inicial)
 
 
 if __name__ == "__main__":
