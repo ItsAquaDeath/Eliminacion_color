@@ -39,22 +39,26 @@ class ImagenPpm:
         almacena las dimensiones de la imagen y separa los píxeles en
         tres canales de color: rojo, ver y azul.
         '''
-        with open(self.Archivo, 'r', encoding="utf-8") as archivo:
-            lineas = archivo.readlines()
-            if lineas[0].strip() != 'P3':
-                raise ValueError("Formato de archivo PPM incorrecto")
+        try:
+            archivo = open(self.Archivo, 'r', encoding="utf-8")
+        except FileNotFoundError:
+            raise FileNotFoundError("Archivo %s no encontrado!" % self.Archivo)
+        lineas = archivo.readlines()
+        archivo.close()
+        if lineas[0].strip() != 'P3':
+            raise ValueError("Formato de archivo PPM incorrecto")
 
-            self.dim = tuple(map(int, lineas[1].split()))
-            datos = [list(map(int, linea.split())) for linea in lineas[3:]]
-            R = []
-            G = []
-            B = []
-            for fila in datos:
-                for i in range(0, len(fila), 3):
-                    R.append(fila[i])
-                    G.append(fila[i+1])
-                    B.append(fila[i+2])
-            self.pixeles_RGB = [R, G, B]
+        self.dim = tuple(map(int, lineas[1].split()))
+        datos = [list(map(int, linea.split())) for linea in lineas[3:]]
+        R = []
+        G = []
+        B = []
+        for fila in datos:
+            for i in range(0, len(fila), 3):
+                R.append(fila[i])
+                G.append(fila[i+1])
+                B.append(fila[i+2])
+        self.pixeles_RGB = [R, G, B]
 
 
 def eliminar_color(rojo: list, verde: list, azul: list) -> list:
@@ -134,7 +138,11 @@ def main():
 
     try:
         imagen.Leer_archivo()
-    except ValueError:
+    except ValueError as e:
+        print(e)
+        exit(1)
+    except FileNotFoundError as e:
+        print(e)
         exit(1)
 
     # Eliminación del color
