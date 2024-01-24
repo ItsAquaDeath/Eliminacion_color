@@ -2,9 +2,8 @@
 eliminacion_color_sec.py
 
 Este programa secuencial transforma una imagen a color en una imagen en blanco
-y negro.
-Para ello, recibe un fichero en formato "ppm" tipo "ascii" y devuelve un
-fichero en formato "pgm".
+y negro. Para ello, recibe un fichero en formato "ppm" tipo "ascii"
+y devuelve un fichero en formato "pgm".
 
 Trabajos de Programación avanzada.
 Cuestionarios en grupo 1: Eliminación del color.
@@ -23,7 +22,8 @@ from time import time
 
 class ImagenPpm:
     def __init__(self, Archivo: str):
-        """Esta función inicializa una nueva instancia de la clase ImagenPpm.
+        """
+        Esta función inicializa una nueva instancia de la clase ImagenPpm.
 
         Args:
             Archivo (str): Ruta del archivo de imagen en formato .ppm
@@ -37,7 +37,7 @@ class ImagenPpm:
         '''
         Funcion que permite comprobar el numero magico P3 del archivo,
         almacena las dimensiones de la imagen y separa los píxeles en
-        tres canales de color: rojo, ver y azul.
+        tres canales de color: rojo, verde y azul.
         '''
         try:
             archivo = open(self.Archivo, 'r', encoding="utf-8")
@@ -128,11 +128,13 @@ def main():
     fichero obtenido. Se utiliza la función time() del módulo time para obtener
     el tiempo de ejecución empleado.
     """
-    tiempo_inicial = time()
+    print("Este programa permite eliminar la información de color contenida "
+          "en una imagen 'ppm' tipo 'ascii'.")
 
     # Creación del objeto Imagen_ppm
     Archivo = input("Por favor, introduce el nombre del archivo con"
                     " la extensión '.ppm': ")
+    tiempo_inicial = time()
 
     imagen = ImagenPpm(Archivo)
 
@@ -155,7 +157,10 @@ def main():
     grabar_imagen(imagen.dim[0], imagen.dim[1], gris, nuevo_nombre)
 
     tiempo_final = time()
-    print(tiempo_final - tiempo_inicial)
+    print("¡Ejecución finalizada! La imagen sin color se ha guardado en el "
+          "fichero %s." % nuevo_nombre)
+    print("El programa ha tardado %.4f segundos en su ejecución."
+          % (tiempo_final - tiempo_inicial))
 
 
 if __name__ == "__main__":

@@ -39,7 +39,7 @@ class ImagenPpm:
         '''
         Funcion que permite comprobar el numero magico P3 del archivo,
         almacena las dimensiones de la imagen y separa los píxeles en
-        tres canales de color: rojo, ver y azul.
+        tres canales de color: rojo, verde y azul.
         '''
         try:
             archivo = open(self.Archivo, 'r', encoding="utf-8")
@@ -63,7 +63,7 @@ class ImagenPpm:
         self.pixeles_RGB = [R, G, B]
 
 
-def eliminar_color(array_gris: list, rojo: list, verde: list, azul: list,
+def eliminar_color(array_gris: Array, rojo: list, verde: list, azul: list,
                    ini: int, fin: int) -> None:
     """
     Esta función recibe tres listas de píxeles, realiza una operación de
@@ -71,7 +71,7 @@ def eliminar_color(array_gris: list, rojo: list, verde: list, azul: list,
     y añade los píxeles resultado a un array en memoria compartida.
 
     Args:
-        array_gris (lis) Array en memoria compartida que contendrá
+        array_gris (Array) Array en memoria compartida que contendrá
                          los píxeles sin color.
         rojo (list) Lista de valores de píxeles rojos.
         verde (list) Lista de valores de píxeles verdes.
@@ -87,7 +87,7 @@ def eliminar_color(array_gris: list, rojo: list, verde: list, azul: list,
 
 
 def elim_color_procesos(rojo: list, verde: list, azul: list, num_procesos: int,
-                        len_imagen: int) -> list:
+                        len_imagen: int) -> Array:
     """
     Esta función recibe tres listas de píxeles, las fragmenta en tantas
     sublistas como número de procesos se le pasen a la función y aplica
@@ -101,6 +101,9 @@ def elim_color_procesos(rojo: list, verde: list, azul: list, num_procesos: int,
         num_procesos (int) Número de procesos que se van a usar en la
                             paralelización.
         len_imagen (int) Total de píxeles o valores que conforman la imagen.
+
+    Returns:
+        Array: Se devuelve el Array con la información de gris
     """
 
     # Verificar que las listas tienen la misma longitud
@@ -108,7 +111,7 @@ def elim_color_procesos(rojo: list, verde: list, azul: list, num_procesos: int,
         # Esto, en función del resto de código, se puede redirigir a otra cosa
         raise ValueError("Las listas no tienen la misma longitud")
 
-    divisiones = len(rojo)//num_procesos
+    divisiones = len(rojo) // num_procesos
     resto = len(rojo) % num_procesos
     array_gris = Array("i", len_imagen, lock=False)
 
@@ -117,12 +120,13 @@ def elim_color_procesos(rojo: list, verde: list, azul: list, num_procesos: int,
     for i in range(num_procesos):
         inicio = i*divisiones
 
+        # El ultimo proceso debe llevar los pixeles resto de la division
         if i == num_procesos - 1:
             final = (i+1)*divisiones + resto
         else:
             final = (i+1)*divisiones
 
-        # En cada proceso se llama a la funcion que eliminar el color de un
+        # En cada proceso se llama a la funcion que elimina el color de un
         # subconjunto de píxeles de cada lista.
         n = Process(target=eliminar_color, args=(array_gris, rojo, verde,
                                                  azul, inicio, final))
@@ -139,7 +143,7 @@ def elim_color_procesos(rojo: list, verde: list, azul: list, num_procesos: int,
 
 def grabar_imagen(ancho: int, alto: int, grises: list, filename: str) -> None:
     """
-    Esta función recibe un alista de píxeles y, a partir de ella, graba una
+    Esta función recibe una lista de píxeles y, a partir de ella, graba una
     imagen en formato "pgm" con las dimensiones especificadas.
 
     Args:
@@ -177,9 +181,10 @@ def main():
     nuevo fichero obtenido. Se utiliza la función time() del módulo time para
     obtener el tiempo de ejecución empleado.
     """
-    tiempo_inicial = time()
 
     # Lectura de los argumentos iniciales y comprobar que estén bien
+    print("Este programa permite eliminar la información de color contenida "
+          "en una imagen 'ppm' tipo 'ascii' utilizando procesos.")
     Archivo = input("Por favor, introduce el nombre del archivo con"
                     " la extensión '.ppm': ")
     try:
@@ -194,6 +199,7 @@ def main():
               " ejecutará empleando 1 proceso.")
         procesos = 1
 
+    tiempo_inicial = time()
     # Leer el fichero de imagen
     imagen = ImagenPpm(Archivo)
     try:
@@ -206,7 +212,7 @@ def main():
         exit(1)
 
     # Eliminación del color
-    long_array = imagen.dim[0]*imagen.dim[0]
+    long_array = imagen.dim[0] * imagen.dim[0]
     gris = elim_color_procesos(imagen.pixeles_RGB[0], imagen.pixeles_RGB[1],
                                imagen.pixeles_RGB[2], procesos, long_array)
 
@@ -216,7 +222,9 @@ def main():
 
     # Se imprime el tiempo de ejecución
     tiempo_final = time()
-    print("Tiempo de ejecución:", tiempo_final - tiempo_inicial)
+    print("¡Ejecución finalizada! La imagen sin color se ha guardado en el "
+          "fichero %s." % nuevo_nombre)
+    print("Tiempo de ejecución:", tiempo_final - tiempo_inicial, "segundos.")
 
 
 if __name__ == "__main__":
